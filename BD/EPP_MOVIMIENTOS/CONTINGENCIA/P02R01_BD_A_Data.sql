@@ -1,0 +1,61 @@
+USE EPP_Movimientos
+GO
+
+/*
+PROYECTO: P02R01_BD_IR
+AUTOR: ISRAEL REYES
+FECHA: 20261109
+DESCRIPCIÓN: Limpiar los datos
+
+ORDEN DE EJECUCIÓN
+	1. Movimientos
+	2. Empleados
+*/
+
+BEGIN TRANSACTION;
+BEGIN TRY
+	IF EXISTS(SELECT 1
+		FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Movimientos'
+		AND TABLE_SCHEMA = 'dbo'
+	)
+		BEGIN
+			DELETE FROM dbo.Movimientos;
+			PRINT 'Datos de Movimientos eliminados correctamente'
+		END
+	ELSE 
+		BEGIN
+			PRINT 'La tabla [dbo].[Movimientos] no existe'
+		END
+	COMMIT TRANSACTION;
+END TRY
+BEGIN CATCH
+	IF @@TRANCOUNT > 0
+	ROLLBACK TRANSACTION;
+	THROW;
+END CATCH
+GO
+
+
+
+BEGIN TRANSACTION;
+BEGIN TRY
+	IF EXISTS(SELECT 1
+		FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Empleados' 
+		AND TABLE_SCHEMA = 'dbo'
+	)
+		BEGIN
+			DELETE FROM dbo.Empleados;
+			PRINT 'Datos de Empleados eliminados correctamente'
+		END
+	ELSE
+		BEGIN
+			PRINT 'La tabla [dbo].[Empleados] no existe'
+		END
+	COMMIT TRANSACTION;
+END TRY
+BEGIN CATCH
+	IF @@TRANCOUNT > 0
+	ROLLBACK TRANSACTION;
+	THROW;
+END CATCH
+GO

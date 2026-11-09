@@ -1,0 +1,77 @@
+USE EPP_Inventario
+GO
+
+/*
+PROYECTO: B02R02_BD_IS
+AURTOR: ISRAEL REYES
+FECHA: 20261108
+DESCRIPCIÓN: CREAR TABLAS
+*/
+
+BEGIN TRANSACTION;
+BEGIN TRY
+	IF NOT EXISTS (SELECT 1 
+		FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' 
+		AND TABLE_NAME = 'Categorias' 
+		)
+		BEGIN
+			CREATE TABLE Categorias(
+				CategoriaId INT PRIMARY KEY IDENTITY(1,2),
+				Nombre NVARCHAR(100) NOT NULL,
+				Descripcion NVARCHAR(355) NOT NULL,
+				Activo BIT DEFAULT 1,
+				FechaCreacion DATETIME DEFAULT GETDATE()
+			);
+			PRINT 'Tabla Categorias creada correctamente'
+		END
+	ELSE
+	BEGIN
+		PRINT 'La tabla Categorias ya existe'
+	END
+	COMMIT TRANSACTION;
+END TRY
+BEGIN CATCH
+	IF @@TRANCOUNT > 0
+		ROLLBACK TRANSACTION;
+		THROW;
+END CATCH
+GO
+
+
+BEGIN TRANSACTION;
+BEGIN TRY
+	IF NOT EXISTS (SELECT 1
+		FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo'
+		AND TABLE_NAME = 'Productos'
+		)
+		BEGIN
+			CREATE TABLE Productos(
+				ProductoId INT PRIMARY KEY IDENTITY(1,1),
+				CategoriaId INT NOT NULL,
+				Codigo NVARCHAR(20) NOT NULL UNIQUE,
+				Nombre NVARCHAR(150) NOT NULL,
+				Descripcion NVARCHAR(500),
+				Marca NVARCHAR(100),
+				Talla NVARCHAR(20),
+				StockActual INT DEFAULT 0,
+				StockMaximo INT DEFAULT 5,
+				Precio DECIMAL(10,2),
+				Activo BIT DEFAULT 1,
+				FechaCreacion DATETIME DEFAULT GETDATE(),
+				CONSTRAINT FK_Productos_Categorias
+					FOREIGN KEY (CategoriaId) REFERENCES Categorias(CategoriaId)
+			);
+			PRINT 'Tabla Productos creada correctamente'
+		END
+	ELSE 
+		BEGIN
+			PRINT 'Tabla [dbo].[Productos] ya existe'
+		END
+	COMMIT TRANSACTION;
+END TRY
+BEGIN CATCH
+	IF @@TRANCOUNT > 0
+		ROLLBACK TRANSACTION;
+		THROW;
+END CATCH
+GO

@@ -1,0 +1,11 @@
+@EPP_MOVIMIENTO_API_HostAddress = http://localhost:5198
+
+GET {{EPP_MOVIMIENTO_API_HostAddress}}/api/Movimientos/
+Accept: application/json
+
+###
+
+GET {{EPP_MOVIMIENTO_API_HostAddress}}/api/Empleados/
+Accept: application/json
+
+###

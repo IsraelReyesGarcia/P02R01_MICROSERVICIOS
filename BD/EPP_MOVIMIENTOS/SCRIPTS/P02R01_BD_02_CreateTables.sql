@@ -1,0 +1,76 @@
+USE EPP_Movimientos
+GO
+
+/*
+PROYECTO: CREAR BASE DE DATOS EPP_Movimientos PARA UN SAAS CON MICROSERVICIOS
+AUTOR: ISRAEL REYES
+FECHA: 20261108
+DESCRIPCIÓN: CREAR BASE DE DATOS
+*/
+
+BEGIN TRANSACTION;
+BEGIN TRY
+	IF NOT EXISTS (SELECT 1 
+		FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' 
+		AND TABLE_NAME = 'Empleados'
+		)
+		BEGIN
+			CREATE TABLE Empleados(
+				EmpleadoId INT PRIMARY KEY IDENTITY(1,1),
+				NumEmpleado NVARCHAR(20) NOT NULL UNIQUE,
+				Nombre NVARCHAR(100) NOT NULL,
+				Apellidos NVARCHAR(150) NOT NULL,
+				Departamento NVARCHAR(100),
+				Puesto NVARCHAR(100),
+				Activo BIT DEFAULT 1,
+				FechaAlta DATETIME DEFAULT GETDATE()
+			)
+			PRINT 'Tabla Empleados creada correctamente'
+		END
+	ELSE
+		BEGIN
+			PRINT 'Tabla [dbo].[Empleados] ya existe'
+		END
+	COMMIT TRANSACTION;
+END TRY
+BEGIN CATCH
+	IF @@TRANCOUNT > 0
+	ROLLBACK TRANSACTION;
+	THROW;
+END CATCH
+GO
+
+BEGIN TRANSACTION;
+BEGIN TRY
+	IF NOT EXISTS(SELECT 1
+		FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' 
+		AND TABLE_NAME = 'Movimientos'
+		)
+		BEGIN
+			CREATE TABLE Movimientos(
+				MovimientoId INT PRIMARY KEY IDENTITY(1,1),
+				TipoMovimiento NVARCHAR(20) NOT NULL,
+				ProductoId INT NOT NULL,
+				ProductoNombre NVARCHAR(150) NOT NULL,
+				EmpleadoId INT,
+				Cantidad INT NOT NULL,
+				Motivo NVARCHAR(255),
+				FechaMovimiento DATETIME DEFAULT GETDATE(),
+				Registrador NVARCHAR(100),
+				CONSTRAINT FK_Movimientos_Empleados
+					FOREIGN KEY (EmpleadoId)REFERENCES Empleados(EmpleadoId)
+			);
+			PRINT 'Tabla Movimientos creada correctamente'
+		END
+	ELSE
+		BEGIN
+			PRINT 'La tabla [dbo].[Movimientos] ya existe'
+		END
+	COMMIT TRANSACTION;
+END TRY
+BEGIN CATCH
+	IF @@TRANCOUNT > 0
+		ROLLBACK TRANSACTION;
+		THROW;
+END CATCH
+GO

@@ -1,0 +1,11 @@
+@EPPP_INVENTARIO_API_HostAddress = http://localhost:5236
+
+GET {{EPPP_INVENTARIO_API_HostAddress}}/api/Productos/
+Accept: application/json
+
+###
+
+GET {{EPPP_INVENTARIO_API_HostAddress}}/api/Categorias/
+Accept: application/json
+
+###
